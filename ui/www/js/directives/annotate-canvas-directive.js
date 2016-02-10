@@ -16,7 +16,7 @@ angular.module("annotate-canvas-directive", [])
                 context.drawImage(imageObj, 0, 0, 700, 1000);
             };
             
-            imageObj.src = "a01-030.png";
+            imageObj.src = "data/benchmarking/001_1.png";
             
             var tool = new tool_pencil();
             

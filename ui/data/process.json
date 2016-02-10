@@ -1,0 +1,22 @@
+[
+    {
+        "name": "document corpus",
+        "url": "documents",
+        "percent": 47
+    },
+    {
+        "name": "feature extraction",
+        "url": "features",
+        "percent": 20
+    },
+    {
+        "name": "clustering",
+        "url": "clustering",
+        "percent": 62
+    },
+    {
+        "name": "classification",
+        "url": "classification",
+        "percent": 71
+    }
+]

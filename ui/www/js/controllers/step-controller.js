@@ -21,7 +21,7 @@ angular.module("step-controller", [])
     /*******************************/
     
     // get data
-    getData("static", "author_adjacency");
+    getData("static", "steps");
     
 	function getData(endpoint, id) {
 		dataService.getData(endpoint, id).then(function(data) {

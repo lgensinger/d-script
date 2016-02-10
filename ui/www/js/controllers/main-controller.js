@@ -11,7 +11,7 @@ angular.module("main-controller", [])
     
     $scope.steps;
     
-    getSteps("process"); // get content for slider
+    getSteps("static", "process"); // get content for slider
     
     
     /****************************/
@@ -29,8 +29,8 @@ angular.module("main-controller", [])
     /********* !FUNCTIONS **********/
     /*******************************/
     
-    function getSteps(endpoint) {
-		dataService.getData(endpoint).then(function(data) {
+    function getSteps(endpoint, id) {
+		dataService.getData(endpoint, id).then(function(data) {
                         
             // assign to scope
 			$scope.steps = data;

@@ -61,7 +61,7 @@ angular.module("traveling-nodes-directive", [])
 
                         };
                         
-                        function draw(data) {                              
+                        function draw(data) {     console.log(data);                         
                             
 var USER_SPEED = "slow";
 
@@ -71,17 +71,7 @@ var padding = 0,
 var sched_objs = [],
 	curr_minute = 0;
 
-var act_codes = [
-	{"index": "0", "short": "", "desc": ""},
-	{"index": "1", "short": "", "desc": ""},
-	{"index": "2", "short": "", "desc": ""},
-	{"index": "3", "short": "", "desc": ""},
-	{"index": "4", "short": "", "desc": "None"},
-    {"index": "5", "short": "", "desc": ""},
-    {"index": "6", "short": "", "desc": ""},
-    {"index": "7", "short": "", "desc": ""},
-    {"index": "8", "short": "", "desc": ""}
-];
+var act_codes = data;
 
 
 var speeds = { "slow": 1000, "medium": 200, "fast": 50 };
@@ -136,9 +126,6 @@ act_codes.forEach(function(code, i) {
     };
         
 });
-
-// Load data and let's do it.
-d3.tsv("data/test3.tsv", function(error, data) {
     
     var button = d3.select(element[0])
                     .append("button")
@@ -667,7 +654,6 @@ force
 		
 		USER_SPEED = d3.select(this).attr("data-val");
     });
-}); // @end d3.tsv
 
 
 

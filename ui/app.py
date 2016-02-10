@@ -13,7 +13,6 @@ urls = (
     "/rest/static/(.*)", "static_data",
     "/rest/similarity/(author|fragment)/(.*)", "similarity",
     "/rest/classification/(.*)", "classification",
-    "/rest/process", "process",
     # front-end routes to load angular app
     "/", "index",
     "/(.+)", "www"
@@ -167,38 +166,10 @@ class static_data:
         params = web.input()
         
         try:
-            f = open("www/data/" + name + ".json")
+            f = open("data/" + name + ".json")
             return f.read()
         except IOError:
             web.notfound()
-            
-class process:
-    def GET(self):
-        
-        data = [
-            {
-                "name": "document corpus",
-                "url": "documents",
-                "percent": 47
-            },
-            {
-                "name": "feature extraction",
-                "url": "features",
-                "percent": 20
-            },
-            {
-                "name": "clustering",
-                "url": "clustering",
-                "percent": 62
-            },
-            {
-                "name": "classification",
-                "url": "classification",
-                "percent": 71
-            }
-        ];
-        
-        return json.dumps(data);
         
 app = web.application(urls, globals())
     
