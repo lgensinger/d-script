@@ -45,6 +45,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         },
         controller: "stepCtrl"
     })
-    $urlRouterProvider.otherwise("/documents");
+    $urlRouterProvider.otherwise("/ingest");
 
 });

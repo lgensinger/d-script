@@ -1,22 +1,10 @@
 [
     {
-        "name": "document corpus",
-        "url": "documents",
-        "percent": 47
+        "name": "ingestion",
+        "url": "ingest"
     },
     {
-        "name": "feature extraction",
-        "url": "features",
-        "percent": 20
-    },
-    {
-        "name": "clustering",
-        "url": "clustering",
-        "percent": 62
-    },
-    {
-        "name": "classification",
-        "url": "classification",
-        "percent": 71
+        "name": "demo",
+        "url": "demo"
     }
 ]

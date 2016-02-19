@@ -1,22 +1,59 @@
+import os
 import sys
 import h5py
 import json
 import operator
 import web
-
+import psycopg2
 import numpy as np
 
+from PyPDF2 import PdfFileReader, PdfFileWriter
+
 sys.path.append("..")
+
+host_name = "192.168.99.100"
 
 urls = (
     # rest API backend endpoints
     "/rest/static/(.*)", "static_data",
     "/rest/similarity/(author|fragment)/(.*)", "similarity",
     "/rest/classification/(.*)", "classification",
+    "/rest/ingest", "ingest",
     # front-end routes to load angular app
     "/", "index",
     "/(.+)", "www"
 )
+
+def store_doc(host):
+    
+    try:
+        # establish connection
+        conn = psycopg2.connect("dbname='postgres' user='postgres' host='" + host + "' password='pguser'")
+        
+        # get a cursor
+        cur = conn.cursor()
+        
+        # set up query string
+        #query = "insert into control (name, modified) values (%(model_name)s, now())"
+        query = "select * from test"
+        
+        # open execute a query
+        #cur.executemany(query, models)
+        cur.execute(query)
+        
+        # get results
+        rows = cur.fetchall()
+        
+        return rows
+        
+        # commit the query
+        #conn.commit()
+        
+        # close connection
+        conn.close()
+        
+    except:
+        print "can't make connection"
 
 class www:
     def GET(self, filename):
@@ -170,6 +207,20 @@ class static_data:
             return f.read()
         except IOError:
             web.notfound()
+            
+class ingest:
+    def GET(self):
+        
+        # set up params
+        i = web.input(name=None)
+        params = web.input()
+        
+        try:
+            data = store_doc(host_name)
+        except IOError:
+            web.notfound()
+            
+        return data
         
 app = web.application(urls, globals())
     

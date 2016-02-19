@@ -7,6 +7,7 @@ angular.module("step-controller", [])
     /**************************/
     
     $scope.nodes;
+    $scope.tsneNodes;
     
     
     
@@ -21,13 +22,14 @@ angular.module("step-controller", [])
     /*******************************/
     
     // get data
-    getData("static", "steps");
+    getData("static", "steps", "nodes");
+    getData("static", "tsnetest", "tsneNodes");
     
-	function getData(endpoint, id) {
+	function getData(endpoint, id, name) {
 		dataService.getData(endpoint, id).then(function(data) {
             
             // set current batch
-            $scope.nodes = data;
+            $scope[name] = data;
            
 		});
 		

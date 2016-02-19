@@ -3,5 +3,7 @@ var app = angular.module("app.directives", [
     "annotate-canvas-directive",
     "content-slider-directive",
     "traveling-nodes-directive",
-    "stacked-bar-chart-directive"
+    "stacked-bar-chart-directive",
+    "file-upload-directive",
+    "tsne-nodes-directive"
 ]);
