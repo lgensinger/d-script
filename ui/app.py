@@ -18,6 +18,7 @@ urls = (
     "/rest/static/(.*)", "static_data",
     "/rest/similarity/(author|fragment)/(.*)", "similarity",
     "/rest/classification/(.*)", "classification",
+    "/rest/dissimilarity", "dissimilarity",
     "/rest/ingest", "ingest",
     # front-end routes to load angular app
     "/", "index",
@@ -57,6 +58,7 @@ def store_doc(host):
 
 class www:
     def GET(self, filename):
+        
         try:
             f = open('www/' + filename)
             if filename.endswith(".css"):
@@ -67,6 +69,7 @@ class www:
             
 class index:
     def GET(self):
+        
         try:
             f = open("www/index.html")
             return f.read()
@@ -75,6 +78,7 @@ class index:
 
 class similarity:
     def GET(self, mode, item_id):
+        
         def get_author_id(i):
             author_id = 1 + (i / 4)
             return author_id
@@ -222,6 +226,43 @@ class ingest:
             
         return data
         
+class dissimilarity:
+    def GET(self):
+        
+        def get_author_id(i):
+            author_id = 1 + (i / 4)
+            return author_id
+
+        def get_fragment_id(i):
+            file_id = 1 + (i % 4)
+            return file_id
+
+        def get_full_id(i):
+            full_id = "{0:03}_{1}".format(get_author_id(i), get_fragment_id(i))
+            return full_id
+        
+        # read in file
+        f = h5py.File("data/icdar_fragments_distances.hdf5", "r")
+        
+        # get keys
+        keys = f.keys()
+        
+        # because there is just one we can set it here
+        # if we have more than one key we can loop in the future
+        matrix = np.array(f[keys[0]])
+        
+        # empty array for node attributes
+        nodes = [] 
+        
+        # loop through matrix to populate node id
+        for i in xrange(matrix.shape[0]):
+            node_full_id = get_full_id(i)
+            nodes.append({"id": node_full_id})
+            
+        data = { "nodes": nodes, "matrix": matrix.tolist() }
+        
+        return json.dumps(data)
+    
 app = web.application(urls, globals())
     
 if __name__ == "__main__":

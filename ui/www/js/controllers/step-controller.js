@@ -6,6 +6,7 @@ angular.module("step-controller", [])
     /********* !DATA **********/
     /**************************/
     
+    $scope.layout = "stack";
     $scope.nodes;
     $scope.tsneNodes;
     
@@ -23,7 +24,7 @@ angular.module("step-controller", [])
     
     // get data
     getData("static", "steps", "nodes");
-    getData("static", "tsnetest", "tsneNodes");
+    getData("dissimilarity", null, "tsneNodes");
     
 	function getData(endpoint, id, name) {
 		dataService.getData(endpoint, id).then(function(data) {

@@ -9,7 +9,6 @@
 /* !GLOBALS
 /* !CUSTOM
 /* --- !content slider
-/* --- !traveling nodes
 /* --- !tsne nodes
 
 /******************************* !IMPORTS *******************************/
@@ -89,26 +88,18 @@ content-slider section div {
 
 }
 
-/**************************/
-/**** !traveling nodes ****/
-/**************************/
-
-traveling-nodes .node {
-    
-    cursor: pointer;
-    
-}
-
-traveling-nodes .node:hover {
-    
-    fill: rgba(198, 8, 203, 0.7);
-    
-}
-
 /*********************/
 /**** !tsne nodes ****/
 /*********************/
 
+/* canvas background */
+tsne-nodes .background {
+    
+    fill: none;
+    
+}
+
+/* node text */
 tsne-nodes text {
     
     font-size: 0.5em;
@@ -116,6 +107,7 @@ tsne-nodes text {
     
 }
 
+/* nodes */
 tsne-nodes circle {
     
     cursor: pointer;
@@ -127,5 +119,18 @@ tsne-nodes circle {
 tsne-nodes circle:hover {
     
     opacity: 1.0;
+    
+}
+
+/* tool tip */
+tsne-nodes div.tooltip {	
+    
+    background: white;	
+    height: auto;
+    padding: 0.25em;						
+    pointer-events: none;
+    position: absolute;
+    text-align: center;	
+    width: 5em;
     
 }
