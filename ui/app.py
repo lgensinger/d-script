@@ -8,6 +8,8 @@ import psycopg2
 import numpy as np
 
 from PyPDF2 import PdfFileReader, PdfFileWriter
+from images2gif import writeGif
+from PIL import Image
 
 sys.path.append("..")
 

@@ -5,5 +5,6 @@ var app = angular.module("app.directives", [
     "traveling-nodes-directive",
     "stacked-bar-chart-directive",
     "file-upload-directive",
-    "tsne-nodes-directive"
+    "tsne-nodes-directive",
+    "image-slider-directive"
 ]);

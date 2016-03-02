@@ -4,7 +4,11 @@
         "url": "ingest"
     },
     {
-        "name": "demo",
-        "url": "demo"
+        "name": "dscript",
+        "url": "dscript"
+    },
+    {
+        "name": "generation",
+        "url": "generate"
     }
 ]

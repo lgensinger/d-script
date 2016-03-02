@@ -8,16 +8,27 @@ angular.module("tsne-nodes-directive", [])
             canvasWidth: "=",
             canvasHeight: "="
 		},
-        template: "<img ng-src='{{ path }}' width='100%' height='auto'/><svg></svg><content-slider viz-data='details' layout='layout'></content-slider><div class='tooltip'></div>",
+        controller: function($scope) {
+            
+            // set up empty data array to hold clicked on nodes
+            $scope.details = [];
+            
+            $scope.displayCount = 5;
+            
+        },
+        templateUrl: "templates/directives/tsne-nodes.html",
 		link: function(scope, element, attrs) {
 			
 			// get d3 promise
 			d3Service.d3().then(function(d3) {
+                
+                // get element dimensions for svg container
+                var svgParent = element.find("svg")[0].parentElement;
                                 
                 // set sizes from attributes in html element
                 // if not attributes present - use default
-				var width = parseInt(attrs.canvasWidth) || 700;
-                var height = parseInt(attrs.canvasHeight) || width;
+				var width = parseInt(attrs.canvasWidth) || 1024
+                var height = parseInt(attrs.canvasHeight) || 768;
                 var radius = 2;
 				var color = ["orange", "teal", "grey", "#5ba819"];
                 
@@ -95,8 +106,8 @@ angular.module("tsne-nodes-directive", [])
                                 })
                                 .on({
                                     mouseover: function(d) {
-
-                                        var tip = d3.select(element.find("div")[1]);
+console.log(d);
+                                        var tip = d3.select(".tooltip")[0];
 
                                         tip.transition()		
                                             .duration(200)		
@@ -108,7 +119,7 @@ angular.module("tsne-nodes-directive", [])
                                     },
                                     mouseout: function(d) {
                                         
-                                        var tip = d3.select(element.find("div")[1]);
+                                        var tip = d3.select(".tooltip");
                                         
                                         tip.transition()
                                             .duration(200)
@@ -116,9 +127,6 @@ angular.module("tsne-nodes-directive", [])
                                         
                                     },
                                     click: function(d) {
-                                        
-                                        // set image value
-                                        scope.path = "data/benchmarking/" + d.id + ".png";
                                         
                                         var isActive = d3.select(this).attr("class") == "node active" ? true : false;
                                     
@@ -189,9 +197,38 @@ angular.module("tsne-nodes-directive", [])
                                         
                                             // create new data object
                                             var newData = { id: d.id };
+                                            
+                                            // check for existing subsets
+                                            if (scope.details.length > 0) {
+                                            
+                                                // check last subset in scope
+                                                var lastSubset = scope.details[0];
 
-                                            // assign to scope
-                                            scope.details = [newData].concat(scope.details);
+                                                // check for multiples
+                                                if (lastSubset.length < scope.displayCount) {
+
+                                                    // add this obj to current subset
+                                                    lastSubset.push(newData);
+
+                                                } else {
+
+                                                    // create new subset
+                                                    var newSubset = [newData];
+                                                    
+                                                    // assign to scope
+                                                    scope.details = [newSubset].concat(scope.details);
+
+                                                };
+                                                
+                                            } else {
+                                                
+                                                // add subset
+                                                var newSubset = [newData];
+                                                
+                                                // assign to scope
+                                                scope.details = [newSubset].concat(scope.details);
+                                                
+                                            };
                                             
                                         };
                                         

@@ -1,0 +1,37 @@
+<div class="slider">
+
+    <!-- SUBSET -->
+    <div ng-repeat="detail in vizData"
+         class="slide slide-animation"
+         ng-hide="!isCurrentSlideIndex($index);">
+        
+        <div ng-repeat="item in detail"
+             class="item"
+             style="background-image: url('{{ 'data/benchmarking/' + item.id + '.png' }}')">
+            
+            <p class="title-temp">{{ detail.id.split("_")[0] }}</p>
+        
+        </div>
+
+    </div>
+
+</div>
+
+<div>
+    
+    <!-- NAV ARROWS -->
+    <a class="arrow prev"
+       ng-click="next();">
+        <svg viewBox="0 0 100 58.5">
+            <use xlink:href="assets/arrow-line-2.svg#artwork"></use>
+        </svg>
+    </a>
+
+    <a class="arrow next"
+       ng-click="previous();">
+        <svg viewBox="0 0 100 58.5">
+            <use xlink:href="assets/arrow-line-2.svg#artwork"></use>
+        </svg>
+    </a>
+    
+</div>

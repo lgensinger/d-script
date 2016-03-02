@@ -6,7 +6,6 @@ angular.module("step-controller", [])
     /********* !DATA **********/
     /**************************/
     
-    $scope.layout = "stack";
     $scope.nodes;
     $scope.tsneNodes;
     
