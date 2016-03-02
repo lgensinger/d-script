@@ -23,13 +23,23 @@ angular.module("step-controller", [])
     
     // get data
     getData("static", "steps", "nodes");
-    getData("dissimilarity", null, "tsneNodes");
+    getDataset("icdar13");
     
 	function getData(endpoint, id, name) {
 		dataService.getData(endpoint, id).then(function(data) {
             
             // set current batch
             $scope[name] = data;
+           
+		});
+		
+	};
+    
+    function getDataset(name) {
+		dataService.getDataset(name).then(function(data) {
+            
+            // set current batch
+            $scope.tsneNodes = data;
            
 		});
 		

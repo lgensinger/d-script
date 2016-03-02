@@ -7,20 +7,15 @@ import web
 import psycopg2
 import numpy as np
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-from images2gif import writeGif
 from PIL import Image
 
 sys.path.append("..")
 
-host_name = "192.168.99.100"
-
 urls = (
     # rest API backend endpoints
     "/rest/static/(.*)", "static_data",
-    "/rest/similarity/(author|fragment)/(.*)", "similarity",
+    "/rest/similarity/(dataset|image)/(.*)", "similarity",
     "/rest/classification/(.*)", "classification",
-    "/rest/dissimilarity", "dissimilarity",
     "/rest/ingest", "ingest",
     # front-end routes to load angular app
     "/", "index",
@@ -77,90 +72,6 @@ class index:
             return f.read()
         except IOError:
             web.notfound()
-
-class similarity:
-    def GET(self, mode, item_id):
-        
-        def get_author_id(i):
-            author_id = 1 + (i / 4)
-            return author_id
-
-        def get_fragment_id(i):
-            file_id = 1 + (i % 4)
-            return file_id
-
-        def get_full_id(i):
-            full_id = "{0:03}_{1}".format(get_author_id(i), get_fragment_id(i))
-            return full_id
-
-        def reverse_full_id(full_id):
-            author_id, file_id = full_id.split(".")[0].split("_")
-            author_int = int(author_id)
-            file_int = int(file_id)
-            return 4*(author_int - 1) + (file_int - 1)
-        
-        # set up params
-        i = web.input(item_id=None)
-        params = web.input()
-
-        # assemble list of nodes
-        # grab the fragment-to-fragment distance Dataset from f
-        if mode == "fragment":
-            with h5py.File("data/icdar_fragments_distances.hdf5", "r") as f:
-                dist_matrix = f['metrics'].value
-        elif mode == "author":
-            with h5py.File("data/icdar_authors_distances.hdf5", "r") as f:
-                dist_matrix = f['metrics'].value
-            # ID lookup and reverse lookup for authors
-            # are simpler, provided continuous & zero-based labeling
-            get_full_id = lambda x: "{0:03}".format(x+1)
-            reverse_full_id = lambda x: int(x) - 1
-
-        nodes = [] 
-        for i in xrange(dist_matrix.shape[0]):
-            node_full_id = get_full_id(i)
-            nodes.append({"id": node_full_id})
-
-        # if we are doing a query on an item, also retrieve the K nearest neighbors
-        # and create link objects for those
-        links = []
-        if item_id is not None and item_id != "":
-            item_index = reverse_full_id(item_id)
-            num_nearest = 5
-            nearest_indices = np.argsort(dist_matrix[item_index,:])[1:(num_nearest+1)]
-            cutoff_distance = dist_matrix[item_index,nearest_indices[num_nearest-1]]
-
-            # make node objects
-            if mode=='fragment':
-                # mark nodes from same author
-                self_author = int(get_author_id(item_index)) - 1
-                self_author_node_indices = range(self_author*4, 4)
-                for i in self_author_node_indices:
-                    nodes[i]['same_author'] = True
-
-            # make link objects    
-            for neighbor_index in nearest_indices:
-                # add edges to query node
-                neighbor_distance = dist_matrix[item_index, neighbor_index]
-                links.append({
-                    "source": str(item_index),
-                    "target": str(neighbor_index),
-                    "value": str(neighbor_distance)
-                })
-                # add edges between successive neighbors if close enough
-                for neighbor_2_index in nearest_indices:
-                    if neighbor_2_index > neighbor_index:
-                        neighbor_distance = dist_matrix[neighbor_index, neighbor_2_index]
-                        if neighbor_distance < cutoff_distance:
-                            links.append({
-                                "source": str(neighbor_index),
-                                "target": str(neighbor_2_index),
-                                "value": str(neighbor_distance)
-                            })
-            response = { "nodes": nodes, "links": links }
-
-        # return data object
-        return json.dumps(response)
     
 class classification:
     def GET(self, doc_id):
@@ -200,7 +111,7 @@ class classification:
         
         # return data object
         return json.dumps(result)
-
+    
 class static_data:
     def GET(self, name):
         
@@ -228,40 +139,71 @@ class ingest:
             
         return data
         
-class dissimilarity:
-    def GET(self):
+class similarity:
+    
+    @staticmethod
+    def get_img(img_path, data_path="data/images_base64.hdf5"):
+        
+        # return base64-encoded string representing img i
+        img_path = "{}/{}".format(attributes['image_dir'],
+                                    attributes['image_filenames'][i])
+        with h5py.File(data_path) as img_corpus:
+            img_b64 = img_corpus[img_path]
+        return img_b64
+    
+    def GET(self, mode, data_set):
+        
+        data = {}
         
         def get_author_id(i):
-            author_id = 1 + (i / 4)
-            return author_id
-
+            raise NotImplementedError
+            
         def get_fragment_id(i):
-            file_id = 1 + (i % 4)
-            return file_id
-
-        def get_full_id(i):
-            full_id = "{0:03}_{1}".format(get_author_id(i), get_fragment_id(i))
+            raise NotImplementedError
+            
+        def get_full_id(i, attributes):
+            
+            writer_id = attributes['writer_ids'][i]
+            doc_id = attributes['doc_ids'][i]
+            full_id = "{0}_{1}".format(writer_id, doc_id)
             return full_id
         
-        # read in file
-        f = h5py.File("data/icdar_fragments_distances.hdf5", "r")
-        
-        # get keys
-        keys = f.keys()
-        
-        # because there is just one we can set it here
-        # if we have more than one key we can loop in the future
-        matrix = np.array(f[keys[0]])
-        
-        # empty array for node attributes
-        nodes = [] 
-        
-        # loop through matrix to populate node id
-        for i in xrange(matrix.shape[0]):
-            node_full_id = get_full_id(i)
-            nodes.append({"id": node_full_id})
+        def getNodes(data_set):
             
-        data = { "nodes": nodes, "matrix": matrix.tolist() }
+            # read in file (use with context to make sure it closes)
+            with h5py.File("data/document_distances.hdf5", "r") as f:
+                # get keys
+                keys = f.keys()
+                key_idx = keys.index(data_set)
+                # maybe make this a parameter
+                dataset_key = keys[key_idx]
+                dataset_to_use = f[dataset_key]
+                # because there is just one we can set it here
+                # if we have more than one key we can loop in the future
+                matrix = np.array(dataset_to_use)
+                metadata = dict(dataset_to_use.attrs)
+
+            # empty array for node attributes
+            nodes = []
+
+            # loop through matrix to populate node id
+            for i in xrange(matrix.shape[0]):
+                node_full_id = get_full_id(i, metadata)
+
+                # img_path is notional
+                # can be passed to static get_img method to get b64-encoded png
+                img_path = "{}/{}".format(metadata['image_dir'],
+                                            metadata['image_filenames'][i])
+                nodes.append({"id": node_full_id, "image_path": img_path})
+
+            data = { "nodes": nodes, "matrix": matrix.tolist() }
+            
+            return data
+            
+        if mode == "dataset":
+            data = getNodes(data_set)
+        elif mode == "image":
+            data = similarity.get_img()
         
         return json.dumps(data)
     

@@ -105,27 +105,34 @@ angular.module("tsne-nodes-directive", [])
                                     r: radius
                                 })
                                 .on({
-                                    mouseover: function(d) {
-console.log(d);
-                                        var tip = d3.select(".tooltip")[0];
+                                    /*mouseover: function(d) {
+
+                                        var tip = d3.select(element.find("div")[1]);
 
                                         tip.transition()		
-                                            .duration(200)		
-                                            .style("opacity", .9);		
+                                            .duration(200)	
+                                            .style({
+                                                opacity: 0.9
+                                            })
                                         tip.html(d.id)	
-                                            .style("left", (d3.event.pageX) + "px")		
-                                            .style("top", (d3.event.pageY - 28) + "px");
+                                            .style({
+                                                background: "white",
+                                                left: (d3.event.pageX) + "px",
+                                                top: (d3.event.pageY - 28) + "px"
+                                            });
                                         
                                     },
                                     mouseout: function(d) {
                                         
-                                        var tip = d3.select(".tooltip");
+                                        var tip = d3.select(element.find("div")[1]);
                                         
                                         tip.transition()
                                             .duration(200)
-                                            .style("opacity", 0);
+                                            .style({
+                                                opacity: 0
+                                            });
                                         
-                                    },
+                                    },*/
                                     click: function(d) {
                                         
                                         var isActive = d3.select(this).attr("class") == "node active" ? true : false;
@@ -234,7 +241,7 @@ console.log(d);
                                         
                                         // trigger digest to update details
                                         scope.$apply();
-                                        console.log(scope.details);
+                                        
                                     }
                                 });
                             

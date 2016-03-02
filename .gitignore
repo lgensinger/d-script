@@ -63,3 +63,6 @@ target/
 *.hdf5
 *.npy
 *.tgz
+
+# image data
+benchmarking/

@@ -132,16 +132,21 @@ tsne-nodes circle:hover {
     
 }
 
+tsne-nodes .node.active {
+    
+    fill: rgb(198, 8, 203);
+    
+}
+
 /* tool tip */
 tsne-nodes div.tooltip {	
     
-    background: white;	
-    height: auto;
+    height: 10px;
     padding: 0.25em;						
     pointer-events: none;
     position: absolute;
     text-align: center;	
-    width: 5em;
+    width: 100px;
     
 }
 
@@ -184,7 +189,7 @@ tsne-nodes div.tooltip {
 /* wrap */
 image-slider .slider {
     
-    bottom: 5.2em;
+    bottom: 9em;
     display: flex;
     height: 200px;
     overflow: hidden;

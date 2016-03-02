@@ -4,7 +4,7 @@ angular.module("annotate-canvas-directive", [])
 	return {
 		restrict: "E",
         replace: true,
-        templateUrl: "templates/annotate-canvas.html",
+        templateUrl: "templates/directives/annotate-canvas.html",
 		link: function(scope, element, attrs) {
             
             var context = element[0].getContext("2d");

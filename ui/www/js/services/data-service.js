@@ -27,6 +27,21 @@ angular.module("data-service", [])
 		
     };
     
+    // get datasets
+    dataService.getDataset = function(name) {
+        
+        var apiUrl = urlBase + "/similarity/dataset/" + name;
+            
+        // call data
+        return $http.get(apiUrl).then(function(data) {
+            
+            // return data
+            return data.data;
+            
+        });
+		
+    };
+    
     return dataService;
 
 }]);

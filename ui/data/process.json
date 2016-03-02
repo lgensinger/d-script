@@ -8,7 +8,7 @@
         "url": "dscript"
     },
     {
-        "name": "generation",
-        "url": "generate"
+        "name": "annotation",
+        "url": "annotate"
     }
 ]
