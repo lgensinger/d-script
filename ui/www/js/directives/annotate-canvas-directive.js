@@ -13,7 +13,7 @@ angular.module("annotate-canvas-directive", [])
             var imageObj = new Image();
             
             imageObj.onload = function() {
-                context.drawImage(imageObj, 0, 0, 700, 1000);
+                context.drawImage(imageObj, 0, 0, 800, 144);
             };
             
             imageObj.src = "data/benchmarking/001_1.png";
